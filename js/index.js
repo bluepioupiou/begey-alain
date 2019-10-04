@@ -9,9 +9,30 @@ function filterContent(elementsClass, event) {
         element.style.clipPath = "circle(80px at " + x + "px " + y + "px)"
         element.style.visibility = 'visible'
     })
-    let filterObject = document.querySelectorAll('.filter-object.' + elementsClass)[0]
-    filterObject.style.top = (event.clientY - 100) + 'px'
-    filterObject.style.left = (event.clientX - 100) + 'px'
+    let filterObject = document.querySelectorAll('.filter-object.' + filteredElementClass)[0]
+    filterObject.style.top = (window.scrollY + event.clientY - 100) + 'px'
+    filterObject.style.left = (window.scrollX + event.clientX - 100) + 'px'
+}
+
+function onScroll(event) {
+    let elements = document.querySelectorAll('.navigation-target')
+    let lastElement = elements[0]
+    elements.forEach(element => {
+        const elementPosition = element.getBoundingClientRect()
+        if (elementPosition.top <= 1) {
+            lastElement = element
+        }
+    })
+    let navs = document.querySelectorAll('nav li')
+    navs.forEach(nav => {
+        let a = nav.querySelectorAll("a[href='#" + lastElement.id + "']")
+        let i = nav.querySelectorAll('i')[0]
+        if (a.length) {
+            i.classList.add('selected')
+        } else {
+            i.classList.remove('selected')
+        }
+    })
 }
 
 function unfilterContent(elementsClass) {
@@ -47,6 +68,7 @@ function moveFilter(event) {
   
 document.addEventListener("mousemove", moveFilter);
 document.addEventListener("click", onClickFilter);
+document.addEventListener("scroll", onScroll);
 document.addEventListener('DOMContentLoaded', function() {
     var elems = document.querySelectorAll('.fixed-action-btn');
     var instances = M.FloatingActionButton.init(elems, {
